@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // marks the spot chosen by the user
         const chooseSquare = (row, column, player) => {
             // checks that the square chosen by the player is available
-            if (board[row][column].getValue() !== 0) {
+            if (board[row][column].getValue() !== "") {
                 console.log("cell is occupied")
                 return;
             }
@@ -43,13 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*
 ** A Cell represents one "square" on the board and can have one of
-** 0: no token is in the square,
+** "": no token is in the square,
 ** X: Player One's token,
 ** O: Player 2's token
 */
 
     function Cell() {
-        let value = 0;
+        let value = "";
 
         // Accept a player's token to change the value of the cell
         const addChoice = (player) => {
@@ -58,8 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // How we will retrieve the current value of this cell through closure
         const getValue = () => value;
-
-
 
         return {
             addChoice,
@@ -81,11 +79,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const players = [
             {
                 name: playerOneName,
-                token: "X"
+                token: "X",
+                numTurns: 0
             },
             {
                 name: playerTwoName,
-                token: "O"
+                token: "O",
+                numTurns: 0
             }
         ];
 
@@ -98,27 +98,83 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const printNewRound = () => {
             board.printBoard();
-            console.log(`${getActivePlayer().name}'s turn.`);
+            // console.log(`${getActivePlayer().name}'s turn.`);
+        };
+
+        const checkForWinner = (board) => {
+            const rows = board.length;
+            const columns = board[0].length;
+
+            // Check rows for a win
+            for (let i = 0; i < rows; i++) {
+                if (board[i][0].getValue() !== "" &&
+                    board[i][0].getValue() === board[i][1].getValue() &&
+                    board[i][1].getValue() === board[i][2].getValue()) {
+                    return board[i][0].getValue(); // Return the winning player's token
+                }
+            }
+
+            // Check columns for a win
+            for (let j = 0; j < columns; j++) {
+                if (board[0][j].getValue() !== "" &&
+                    board[0][j].getValue() === board[1][j].getValue() &&
+                    board[1][j].getValue() === board[2][j].getValue()) {
+                    return board[0][j].getValue(); // Return the winning player's token
+                }
+            }
+
+            // Check diagonal (top-left to bottom-right) for a win
+            if (board[0][0].getValue() !== "" &&
+                board[0][0].getValue() === board[1][1].getValue() &&
+                board[1][1].getValue() === board[2][2].getValue()) {
+                return board[0][0].getValue(); // Return the winning player's token
+            }
+
+            // Check diagonal (top-right to bottom-left) for a win
+            if (board[0][2].getValue() !== "" &&
+                board[0][2].getValue() === board[1][1].getValue() &&
+                board[1][1].getValue() === board[2][0].getValue()) {
+                return board[0][2].getValue(); // Return the winning player's token
+            }
+
+            // No winner found
+            return null;
+
+
         };
 
         const playRound = (row, column) => {
             // Drop a token for the current player
             console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
             board.chooseSquare(row, column, getActivePlayer().token);
+            
+            getActivePlayer().numTurns++;
 
-            // while (true) {
-            //     console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
-            //     const isMoveValid = board.chooseSquare(row, column, getActivePlayer().token);
-
-            //     if (isMoveValid) {
-            //       break;
-            //     } else {
-            //       console.log("That space is full, please choose another space");
-            //     }
-            //   }
+            if (players[0].numTurns + players[1].numTurns  === 9) {
+                console.log("Tie!");
+                const winnerText = document.createElement("h2");
+                winnerText.classList.add("honk-font");
+                winnerText.textContent = `It's a tie!`;
+                document.body.appendChild(winnerText);
+            }
 
             /*  This is where we would check for a winner and handle that logic,
-                such as a win message. */
+                such as a win message. */ // CODE DOES NOT WORK
+            const winnerToken = checkForWinner(board.getBoard());
+
+            if (winnerToken === "X") {
+                console.log("The winner is Player 1!");
+                const winnerText = document.createElement("h2");
+                winnerText.classList.add("honk-font");
+                winnerText.textContent = `The winner is Player 1!`;
+                document.body.appendChild(winnerText);
+            } else if (winnerToken === "O") {
+                console.log("The winner is Player 2!");
+                const winnerText = document.createElement("h2");
+                winnerText.classList.add("honk-font");
+                winnerText.textContent = `The winner is Player 2!`;
+                document.body.appendChild(winnerText);
+            } 
 
             // Switch player turn
             switchPlayerTurn();
