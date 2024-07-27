@@ -20,12 +20,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const chooseSquare = (row, column, player) => {
             // checks that the square chosen by the player is available
             if (board[row][column].getValue() !== "") {
-                console.log("cell is occupied")
-                return;
+                alert("pick a square that isn't occupied")
+                return false;
             }
 
             board[row][column].addChoice(player);
-            // return true;
+            return true;
         };
 
         // This method will be used to print our board to the console.
@@ -146,39 +146,37 @@ document.addEventListener('DOMContentLoaded', function () {
         const playRound = (row, column) => {
             // Drop a token for the current player
             console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
-            board.chooseSquare(row, column, getActivePlayer().token);
-            
-            getActivePlayer().numTurns++;
+            let marked = board.chooseSquare(row, column, getActivePlayer().token);
 
-            if (players[0].numTurns + players[1].numTurns  === 9) {
-                console.log("Tie!");
+            if (marked) {
+                getActivePlayer().numTurns++;
+
+                if (players[0].numTurns + players[1].numTurns === 9) {
+                    console.log("Tie!");
+                    const winnerText = document.createElement("h2");
+                    winnerText.classList.add("honk-font");
+                    winnerText.textContent = `It's a tie!`;
+                    document.body.appendChild(winnerText);
+                }
+
+                /*  This is where we would check for a winner and handle that logic,
+                    such as a win message. */ // CODE DOES NOT WORK
+                const winnerToken = checkForWinner(board.getBoard());
                 const winnerText = document.createElement("h2");
                 winnerText.classList.add("honk-font");
-                winnerText.textContent = `It's a tie!`;
-                document.body.appendChild(winnerText);
+
+                if (winnerToken === "X") {
+                    winnerText.textContent = `The winner is Player 1!`;
+                    document.body.appendChild(winnerText);
+                } else if (winnerToken === "O") {
+                    winnerText.textContent = `The winner is Player 2!`;
+                    document.body.appendChild(winnerText);
+                }
+
+                // Switch player turn
+                switchPlayerTurn();
+                printNewRound();
             }
-
-            /*  This is where we would check for a winner and handle that logic,
-                such as a win message. */ // CODE DOES NOT WORK
-            const winnerToken = checkForWinner(board.getBoard());
-
-            if (winnerToken === "X") {
-                console.log("The winner is Player 1!");
-                const winnerText = document.createElement("h2");
-                winnerText.classList.add("honk-font");
-                winnerText.textContent = `The winner is Player 1!`;
-                document.body.appendChild(winnerText);
-            } else if (winnerToken === "O") {
-                console.log("The winner is Player 2!");
-                const winnerText = document.createElement("h2");
-                winnerText.classList.add("honk-font");
-                winnerText.textContent = `The winner is Player 2!`;
-                document.body.appendChild(winnerText);
-            } 
-
-            // Switch player turn
-            switchPlayerTurn();
-            printNewRound();
         };
 
         // Initial play game message
