@@ -28,12 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return true;
         };
 
-        // This method will be used to print our board to the console.
-        // It is helpful to see what the board looks like after each turn as we play,
-        // but we won't need it after we build our UI
+        // prints board
         const printBoard = () => {
             const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()));
-            console.log(boardWithCellValues);
         };
 
         // Here, we provide an interface for the rest of our
@@ -74,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         playerOneName = "Player One",
         playerTwoName = "Player Two"
     ) {
-        const board = Gameboard();
+        let board = Gameboard();
 
         const players = [
             {
@@ -98,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const printNewRound = () => {
             board.printBoard();
-            // console.log(`${getActivePlayer().name}'s turn.`);
         };
 
         const checkForWinner = (board) => {
@@ -110,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (board[i][0].getValue() !== "" &&
                     board[i][0].getValue() === board[i][1].getValue() &&
                     board[i][1].getValue() === board[i][2].getValue()) {
-                    return board[i][0].getValue(); // Return the winning player's token
+                    return board[i][0].getValue();
                 }
             }
 
@@ -119,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (board[0][j].getValue() !== "" &&
                     board[0][j].getValue() === board[1][j].getValue() &&
                     board[1][j].getValue() === board[2][j].getValue()) {
-                    return board[0][j].getValue(); // Return the winning player's token
+                    return board[0][j].getValue();
                 }
             }
 
@@ -127,50 +123,49 @@ document.addEventListener('DOMContentLoaded', function () {
             if (board[0][0].getValue() !== "" &&
                 board[0][0].getValue() === board[1][1].getValue() &&
                 board[1][1].getValue() === board[2][2].getValue()) {
-                return board[0][0].getValue(); // Return the winning player's token
+                return board[0][0].getValue();
             }
 
             // Check diagonal (top-right to bottom-left) for a win
             if (board[0][2].getValue() !== "" &&
                 board[0][2].getValue() === board[1][1].getValue() &&
                 board[1][1].getValue() === board[2][0].getValue()) {
-                return board[0][2].getValue(); // Return the winning player's token
+                return board[0][2].getValue();
             }
 
             // No winner found
             return null;
-
-
         };
 
         const playRound = (row, column) => {
-            // Drop a token for the current player
-            console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
+            // console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
+            // marks spot for current player
             let marked = board.chooseSquare(row, column, getActivePlayer().token);
+
+            const winnerText = document.createElement("h2");
+            winnerText.classList.add("honk-font");
+            winnerText.classList.add("winner-text");
 
             if (marked) {
                 getActivePlayer().numTurns++;
 
                 if (players[0].numTurns + players[1].numTurns === 9) {
-                    console.log("Tie!");
-                    const winnerText = document.createElement("h2");
-                    winnerText.classList.add("honk-font");
                     winnerText.textContent = `It's a tie!`;
                     document.body.appendChild(winnerText);
+                    return;
                 }
 
-                /*  This is where we would check for a winner and handle that logic,
-                    such as a win message. */ // CODE DOES NOT WORK
+                // checks for winner
                 const winnerToken = checkForWinner(board.getBoard());
-                const winnerText = document.createElement("h2");
-                winnerText.classList.add("honk-font");
 
                 if (winnerToken === "X") {
                     winnerText.textContent = `The winner is Player 1!`;
                     document.body.appendChild(winnerText);
+                    return;
                 } else if (winnerToken === "O") {
                     winnerText.textContent = `The winner is Player 2!`;
                     document.body.appendChild(winnerText);
+                    return;
                 }
 
                 // Switch player turn
@@ -179,15 +174,23 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
+        const restartGame = () => {
+            console.log("Restarting game...");
+            board = Gameboard();
+            activePlayer = players[0];
+            players.forEach(player => player.numTurns = 0);
+            document.querySelectorAll(".winner-text").forEach(node => node.remove());
+            printNewRound();
+        };
+
         // Initial play game message
         printNewRound();
 
-        // For the console version, we will only use playRound, but we will need
-        // getActivePlayer for the UI version, so I'm revealing it now
         return {
             playRound,
             getActivePlayer,
-            getBoard: board.getBoard
+            restartGame,
+            getBoard: () => board.getBoard()
         };
     }
 
@@ -195,6 +198,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const game = GameController();
         const playerTurnDiv = document.querySelector('.turn');
         const boardDiv = document.querySelector('.board');
+        const resetButton = document.querySelector('.reset');
+
+        resetButton.addEventListener("click", () => {
+            game.restartGame();
+            updateScreen();
+        });
 
         const updateScreen = () => {
             // clear the board
