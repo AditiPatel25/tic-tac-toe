@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             board[row][column].addChoice(player);
-            return true;
+            // return true;
         };
 
         // This method will be used to print our board to the console.
@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // How we will retrieve the current value of this cell through closure
         const getValue = () => value;
+
+
 
         return {
             addChoice,
@@ -94,6 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         const getActivePlayer = () => activePlayer;
 
+        const printNewRound = () => {
+            board.printBoard();
+            console.log(`${getActivePlayer().name}'s turn.`);
+        };
+
         const playRound = (row, column) => {
             // Drop a token for the current player
             console.log(`Marking ${getActivePlayer().name}'s choice: [${row}][${column}]...`);
@@ -118,6 +125,9 @@ document.addEventListener('DOMContentLoaded', function () {
             printNewRound();
         };
 
+        // Initial play game message
+        printNewRound();
+
         // For the console version, we will only use playRound, but we will need
         // getActivePlayer for the UI version, so I'm revealing it now
         return {
@@ -141,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const activePlayer = game.getActivePlayer();
 
             // Display player's turn
-            playerTurnDiv.textContent = `${activePlayer.name}'s Turn...`
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
 
             // Render board squares
             board.forEach((row, rowIndex) => {
