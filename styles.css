@@ -127,8 +127,9 @@ input {
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 2rem;
+    font-size: 7rem;
     border: 1px solid grey;
     background: white;
     cursor: pointer;
+    font-family: inherit;
 }
