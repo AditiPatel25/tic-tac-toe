@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             board.printBoard();
         };
 
+
         const checkForWinner = (board) => {
             const rows = board.length;
             const columns = board[0].length;
@@ -149,21 +150,19 @@ document.addEventListener('DOMContentLoaded', function () {
             if (marked) {
                 getActivePlayer().numTurns++;
 
-                if (players[0].numTurns + players[1].numTurns === 9) {
-                    winnerText.textContent = `It's a tie!`;
-                    document.body.appendChild(winnerText);
-                    return;
-                }
-
                 // checks for winner
                 const winnerToken = checkForWinner(board.getBoard());
 
                 if (winnerToken === "X") {
-                    winnerText.textContent = `The winner is Player 1!`;
+                    winnerText.textContent = `The winner is ${players[0].name}!`;
                     document.body.appendChild(winnerText);
                     return;
                 } else if (winnerToken === "O") {
-                    winnerText.textContent = `The winner is Player 2!`;
+                    winnerText.textContent = `The winner is ${players[1].name}!`;
+                    document.body.appendChild(winnerText);
+                    return;
+                } else if (players[0].numTurns + players[1].numTurns === 9) {
+                    winnerText.textContent = `It's a tie!`;
                     document.body.appendChild(winnerText);
                     return;
                 }
@@ -195,11 +194,31 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function ScreenController() {
-        const game = GameController();
+        let game = GameController();
         const playerTurnDiv = document.querySelector('.turn');
         const boardDiv = document.querySelector('.board');
-        const resetButton = document.querySelector('.reset');
+        const resetButton = document.getElementById("reset");
+        const player1InputName = document.getElementById("player1-name");
+        const player2InputName = document.getElementById("player2-name");
+        const submitNameButton = document.getElementById("submit-name");
 
+        
+        const setName = (event) => {
+            event.preventDefault();
+
+            const playerOneName = player1InputName.value.trim() || "Player One";
+            const playerTwoName = player2InputName.value.trim() || "Player Two";
+
+            game = GameController(playerOneName, playerTwoName);
+            updateScreen();
+
+            player1InputName.value = "";
+            player2InputName.value = "";
+        };
+
+        submitNameButton.addEventListener("click", setName);
+
+    
         resetButton.addEventListener("click", () => {
             game.restartGame();
             updateScreen();

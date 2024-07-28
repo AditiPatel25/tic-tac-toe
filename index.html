@@ -14,11 +14,29 @@
 
 <body>
     <div class="container">
+        <div class="sidebar">
+            <div class="form">
+                <form>
+                    <h3>Choose your name!</h3>
+                    <div class="field">
+                        <label for="player1-name">Player 1 Name</label>
+                        <input type="text" name="player1-name" id="player1-name">
+                    </div>
+                    <div class="field">
+                        <label for="player2-name">Player 2 Name</label>
+                        <input type="text" name="player2-name" id="player2-name">
+                    </div>
+                    <div class="field">
+                        <button class="reset" id="submit-name">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
         <h1 class="honk-font">TIC TAC TOE</h1>
         <div class="game">
             <div class="above-board">
                 <h2 class="turn"></h2>
-                <button class="reset">Reset Board</button>
+                <button id="reset" class="reset">Reset Board</button>
             </div>
             <div class="board"></div>
         </div>

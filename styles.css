@@ -26,8 +26,55 @@ h1 {
     font-size: 6rem;
 }
 
+h1 {
+    grid-column: 1 / 3;
+}
+
+.game {
+    grid-column: 2 / 3;
+}
+
+.sidebar {
+    grid-row: 2 / 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.form {
+    padding: 30px;
+    background-color: white;
+    height: auto;
+    border-radius: 40px;
+}
+
+label {
+    margin: 5px;
+    text-align: left;
+}
+
+input, label {
+    display: block;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
 .winner-text {
     font-size: 4rem;
+}
+
+.field {
+    margin: 20px;
+}
+
+input {
+    padding-inline-start: 10px;
+    height: 30px;
 }
 
 .reset {
@@ -53,11 +100,13 @@ h1 {
     gap: 30px;
     align-items: center;
 }
+
 .game {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
+
 }
 
 .board {
